@@ -20,6 +20,10 @@ class Client < EM::Connection
 	end
 
 	def connect
+		if bridge.ssl == :both || bridge.ssl == :external
+			start_tls
+		end
+
 		EM.connect bridge.proxy.host, bridge.proxy.port, Connection do |c|
 			c.client = self
 			c.bridge = bridge
@@ -37,10 +41,6 @@ class Client < EM::Connection
 	end
 
 	def disconnect
-		if @connection
-			@connection.close_connection_after_writing
-		end
-
 		close_connection_after_writing
 	end
 
@@ -56,6 +56,10 @@ class Client < EM::Connection
 
 	def received (data)
 		send_data data
+	end
+
+	def unbind
+		@connection.close_connection_after_writing if @connection
 	end
 end
 

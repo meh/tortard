@@ -19,6 +19,10 @@ class Connection < EM::Connection
 
 	def connection_completed
 		socksify(bridge.from.host, bridge.from.port).callback {
+			if bridge.ssl == :both || bridge.ssl == :internal
+				start_tls
+			end
+
 			@client.connected
 		}.errback {|e|
 			Tortard.log "failed to connect to #{bridge.from}"
@@ -31,6 +35,10 @@ class Connection < EM::Connection
 
 	def send_data (data)
 		super
+	end
+
+	def unbind
+		@client.close_connection_after_writing if @client
 	end
 end
 

@@ -50,6 +50,14 @@ class Tortard
 		@proxy = tmp
 	end
 
+	def ssl (what)
+		@ssl, tmp = what, @ssl
+
+		yield
+	ensure
+		@ssl = tmp
+	end
+
 	def host (host)
 		@host, tmp = host, @host
 
@@ -63,7 +71,7 @@ class Tortard
 			from = "#{@host}:#{from}"
 		end
 
-		@bridges << Bridge.new(@proxy || Address.parse('localhost:9050'), Address.parse(from), Address.parse(to))
+		@bridges << Bridge.new(@proxy || Address.parse('localhost:9050'), Address.parse(from), Address.parse(to), @ssl)
 	end
 
 	alias map bridge

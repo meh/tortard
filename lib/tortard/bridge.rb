@@ -19,12 +19,13 @@ require 'tortard/bridge/connection'
 class Tortard
 
 class Bridge
-	attr_reader :proxy, :from, :to, :clients
+	attr_reader :proxy, :from, :to, :ssl, :clients
 
-	def initialize (proxy, from, to)
+	def initialize (proxy, from, to, ssl = :none)
 		@proxy = proxy
 		@from  = from
 		@to    = to
+		@ssl   = ssl
 
 		@clients = []
 	end

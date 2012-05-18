@@ -3,5 +3,15 @@ require 'eventmachine'
 require 'tortard'
 
 EM.run {
-	Tortard.load(ARGV.first || '~/.tortardrc').start
+	d = Tortard.load(ARGV.first || '~/.tortardrc').start
+
+	%w[INT KILL].each {|sig|
+		trap sig do
+			puts 'torchatd stopping...'
+
+			d.stop
+
+			EM.stop_event_loop
+		end
+	}
 }

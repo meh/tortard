@@ -24,8 +24,7 @@ class Tortard
 	end
 
 	def initialize
-		@maps       = []
-		@signatures = []
+		@bridges = []
 	end
 
 	def load (path)
@@ -35,17 +34,11 @@ class Tortard
 	end
 
 	def start
-		@maps.each {|map|
-			@signatures.push EM.start_server map.to.host, map.to.port, Bridge do |c|
-				c.map = map
-			end
-		}
+		@bridges.each(&:start)
 	end
 
 	def stop
-		@signatures.each {|sig|
-			EM.stop_server sig
-		}
+		@bridges.each(&:stop)
 	end
 
 	def proxy (host, port = nil)
@@ -64,11 +57,13 @@ class Tortard
 		@host = tmp
 	end
 
-	def map (from, to)
+	def bridge (from, to)
 		if from.is_a?(Fixnum)
 			from = "#{@host}:#{from}"
 		end
 
-		Map.new(@proxy || Address.parse('localhost:9050'), Address.parse(from), Address.parse(to))
+		@bridges << Bridge.new(@proxy || Address.parse('localhost:9050'), Address.parse(from), Address.parse(to))
 	end
+
+	alias map bridge
 end

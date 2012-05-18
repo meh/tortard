@@ -13,40 +13,33 @@
 require 'eventmachine'
 require 'em-socksify'
 
-require 'tortard/connnection'
+require 'tortard/bridge/client'
+require 'tortard/bridge/connection'
 
 class Tortard
 
 class Bridge
-	attr_accessor :map
+	attr_reader :proxy, :from, :to, :clients
 
-	def post_init
-		@buffer = []
+	def initialize (proxy, from, to)
+		@proxy = proxy
+		@from  = from
+		@to    = to
 
-		EM.connect map.socks.host, map.socks.port, Connection do |c|
-			@connection        = c
-			@connection.bridge = self
+		@clients = []
+	end
+
+	def start
+		@signature = EM.start_server to.host, to.port, Client do |c|
+			@clients << c
+			c.bridge = c
 		end
 	end
 
-	def receive_data (data)
-		if @buffer
-			@buffer << data
-		else
-			@connection.send_data data
-		end
-	end
+	def stop
+		@clients.each(&:close)
 
-	def connected
-		buffer, @buffer = @buffer, nil
-
-		buffer.each {|data|
-			@connection.send_data data
-		}
-	end
-
-	def received (data)
-		send_data data
+		EM.stop_server @signature
 	end
 end
 

@@ -1,4 +1,4 @@
-#--
+#--; end
 #          DO WHAT THE FUCK YOU WANT TO PUBLIC LICENSE
 #                  Version 2, December 2004
 #
@@ -13,22 +13,20 @@
 require 'eventmachine'
 require 'em-socksify'
 
-require 'tortard/connnection'
-
-class Tortard
+class Tortard; class Bridge
 
 class Connection
-	attr_accessor :bridge
+	attr_accessor :bridge, :client
 
 	def connection_completed
-		socksify(bridge.map.from.host, bridge.map.port).callback {
-			@bridge.connected
+		socksify(bridge.from.host, bridge.from.port).callback {
+			@client.connected
 		}
 	end
 
 	def receive_data (data)
-		@bridge.received data
+		@client.received data
 	end
 end
 
-end
+end; end

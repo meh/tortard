@@ -10,22 +10,27 @@
 # 0. You just DO WHAT THE FUCK YOU WANT TO.
 #++
 
-require 'eventmachine'
-require 'em-socksify'
-
 class Tortard; class Bridge
 
-class Connection
+class Connection < EM::Connection
+	include EM::Socksify
+
 	attr_accessor :bridge, :client
 
 	def connection_completed
 		socksify(bridge.from.host, bridge.from.port).callback {
 			@client.connected
+		}.errback {|e|
+			Tortard.log "failed to connect to #{bridge.from}"
 		}
 	end
 
 	def receive_data (data)
 		@client.received data
+	end
+
+	def send_data (data)
+		super
 	end
 end
 

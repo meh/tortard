@@ -3,7 +3,8 @@ require 'eventmachine'
 require 'tortard'
 
 EM.run {
-	d = Tortard.load(ARGV.first || '~/.tortardrc').start
+	d = Tortard.load(ARGV.first || '~/.tortardrc')
+	d.start
 
 	%w[INT KILL].each {|sig|
 		trap sig do

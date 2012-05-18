@@ -12,6 +12,7 @@
 
 require 'eventmachine'
 
+require 'tortard/utils'
 require 'tortard/address'
 require 'tortard/map'
 require 'tortard/bridge'

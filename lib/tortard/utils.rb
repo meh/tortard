@@ -11,22 +11,7 @@
 #++
 
 class Tortard
-
-class Address
-	def self.parse (text)
-		new(*text.split(?:))
+	def self.log (what)
+		puts "[#{Time.now}] #{what}"
 	end
-
-	attr_reader :host, :port
-
-	def initialize (host, port)
-		@host = host
-		@port = port.to_i
-	end
-
-	def to_s
-		"#{host}:#{port}"
-	end
-end
-
 end

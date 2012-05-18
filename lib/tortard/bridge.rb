@@ -31,13 +31,15 @@ class Bridge
 
 	def start
 		@signature = EM.start_server to.host, to.port, Client do |c|
+			c.bridge = self
+			c.connect
+
 			@clients << c
-			c.bridge = c
 		end
 	end
 
 	def stop
-		@clients.each(&:close)
+		@clients.each(&:disconnect)
 
 		EM.stop_server @signature
 	end

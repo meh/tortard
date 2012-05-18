@@ -12,15 +12,19 @@
 
 class Tortard; class Bridge
 
-class Client
+class Client < EM::Connection
 	attr_accessor :bridge
 
 	def post_init
 		@buffer = []
+	end
 
+	def connect
 		EM.connect bridge.proxy.host, bridge.proxy.port, Connection do |c|
-			@connection        = c
-			@connection.client = self
+			c.client = self
+			c.bridge = bridge
+
+			@connection = c
 		end
 	end
 
@@ -32,7 +36,17 @@ class Client
 		end
 	end
 
+	def disconnect
+		if @connection
+			@connection.close_connection_after_writing
+		end
+
+		close_connection_after_writing
+	end
+
 	def connected
+		Tortard.log "connected to #{bridge.from}"
+
 		buffer, @buffer = @buffer, nil
 
 		buffer.each {|data|
@@ -42,12 +56,6 @@ class Client
 
 	def received (data)
 		send_data data
-	end
-
-	def close
-		@connection.close_connection_writing
-
-		close_connection_after_writing
 	end
 end
 

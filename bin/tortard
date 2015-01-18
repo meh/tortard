@@ -6,7 +6,7 @@ EM.run {
 	d = Tortard.load(ARGV.first || '~/.tortardrc')
 	d.start
 
-	%w[INT KILL].each {|sig|
+	%w[INT].each {|sig|
 		trap sig do
 			puts 'torchatd stopping...'
 

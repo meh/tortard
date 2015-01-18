@@ -43,7 +43,7 @@ class Tortard
 	end
 
 	def proxy (host, port = nil)
-		@proxy, tmp = port ? Address.new(host, port) : Address.parse(host)
+		@proxy, tmp = port ? Address.new(host, port) : Address.parse(host), @proxy
 
 		yield
 	ensure
